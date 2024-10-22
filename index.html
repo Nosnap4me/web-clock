@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Clock</title>
+    <link rel="icon" href="clock-icon.png" id="favicon">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.5s ease;
+        }
+
+        h1 {
+            font-size: 5rem;
+            margin: 0;
+            transition: color 0.5s ease;
+        }
+
+        /* Default Theme (Light) */
+        :root {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+        }
+
+        /* Dark Theme */
+        .dark-theme {
+            --bg-color: #282c34;
+            --text-color: white;
+        }
+
+        /* Blue Theme */
+        .blue-theme {
+            --bg-color: #1e3a8a;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+        }
+
+        h1 {
+            color: var(--text-color);
+        }
+
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-button {
+            background-color: var(--text-color);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            color: var(--bg-color);
+            border-radius: 5px;
+        }
+
+        .theme-button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switcher">
+        <button class="theme-button" onclick="switchTheme('light')">Light</button>
+        <button class="theme-button" onclick="switchTheme('dark')">Dark</button>
+        <button class="theme-button" onclick="switchTheme('blue')">Blue</button>
+    </div>
+
+    <h1 id="clock">00:00:00</h1>
+
+    <script>
+        function updateClock() {
+            const clockElement = document.getElementById("clock");
+            const favicon = document.getElementById("favicon");
+
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            const timeString = `${hours}:${minutes}:${seconds}`;
+
+            clockElement.textContent = timeString;
+
+            document.title = timeString;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, 32, 32);
+            ctx.fillStyle = '#fff';
+            ctx.font = '20px Arial';
+            ctx.fillText(hours, 2, 15);
+            ctx.fillText(minutes, 2, 30);
+
+            favicon.href = canvas.toDataURL('image/png');
+        }
+
+        function switchTheme(theme) {
+            document.body.classList.remove('light-theme', 'dark-theme', 'blue-theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else if (theme === 'blue') {
+                document.body.classList.add('blue-theme');
+            }
+            localStorage.setItem('selectedTheme', theme);
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'light';
+            switchTheme(savedTheme);
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+    </script>
+</body>
+</html>
